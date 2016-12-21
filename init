@@ -3,6 +3,11 @@
 curl -sSL https://finagin.github.io/Gulpfile/Gulpfile.js > ./Gulpfile.js
 curl -sSL https://finagin.github.io/Gulpfile/Gulpfile.json > ./Gulpfile.json
 
+if [ ! -f "./package.json" ]
+then
+    echo "{}" > ./package.json
+fi
+
 npm install --save gulp gulp-autoprefixer gulp-concat gulp-csso gulp-minifier gulp-minify gulp-rimraf gulp-sourcemaps gulp-stylus gulp-uglify
 npm install --save-dev browser-sync
 

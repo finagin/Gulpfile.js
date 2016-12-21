@@ -2,7 +2,7 @@
 Gulpfile.js template
 
 ```bash
-curl -sSL https://finagin.gihub.io/Gulpfile/init | sh
+curl -sSL https://finagin.github.io/Gulpfile/init | sh
 ```
 
 ### Config file:
