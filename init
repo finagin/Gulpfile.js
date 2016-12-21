@@ -1,7 +1,8 @@
 #!/bin/bash
 
-curl -sSL https://finagin.github.io/Gulpfile/Gulpfile.js > ./Gulpfile.js
-curl -sSL https://finagin.github.io/Gulpfile/Gulpfile.json > ./Gulpfile.json
+curl -O https://finagin.github.io/Gulpfile/Gulpfile.js
+curl -O https://finagin.github.io/Gulpfile/Gulpfile.json
+
 
 if [ ! -f "./package.json" ]
 then
@@ -12,3 +13,11 @@ npm install --save gulp gulp-autoprefixer gulp-concat gulp-csso gulp-minifier gu
 npm install --save-dev browser-sync
 
 yarn
+
+
+if [ ! -f "./.gitignore" ]
+then
+    touch ./.gitignore
+fi
+
+echo "\nnode_modules" >> ./.gitignore
