@@ -1,0 +1,11 @@
+{
+    "path": {
+        "src": "./src",
+        "root": "./",
+        "dest": "./assets"
+    },
+    "proxy": {
+        "path": "localhost",
+        "port": 80
+    }
+}
