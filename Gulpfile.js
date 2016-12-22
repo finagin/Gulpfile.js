@@ -3,6 +3,7 @@
 var fs = require("fs"),
     gulp = require("gulp"),
     csso = require("gulp-csso"),
+    file = require('gulp-file'),
     rimraf = require("gulp-rimraf"),
     uglify = require("gulp-uglify"),
     stylus = require("gulp-stylus"),
@@ -159,6 +160,12 @@ gulp.task("images:copy", function () {
 });
 
 
+gulp.task("git-ignore", function () {
+    return file(".gitignore", "*", {src: true})
+        .pipe(gulp.dest(path.dest));
+});
+
+
 gulp.task("php-html", function () {
     return gulp
         .src([
@@ -223,7 +230,7 @@ gulp.task("watch", function (cb) {
 });
 
 
-gulp.task("build", ["stylus", "js", "images"]);
+gulp.task("build", ["git-ignore", "stylus", "js", "images"]);
 
 
 gulp.task("default", ["build", "watch"]);
