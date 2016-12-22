@@ -3,6 +3,7 @@
 var fs = require("fs"),
     gulp = require("gulp"),
     csso = require("gulp-csso"),
+    file = require('gulp-file'),
     rimraf = require("gulp-rimraf"),
     uglify = require("gulp-uglify"),
     stylus = require("gulp-stylus"),
@@ -11,7 +12,7 @@ var fs = require("fs"),
     sourcemaps = require("gulp-sourcemaps"),
     autoprefixer = require("gulp-autoprefixer"),
 
-    defaults = function (obj, def) {
+    defaults = function defaults(obj, def) {
         function req(obj, def) {
             for (var key in def) {
                 if (obj[key]) {
@@ -48,11 +49,11 @@ var fs = require("fs"),
         root: settings.path.root,
         dest: settings.path.dest,
 
-        include: function () {
+        include: function include() {
             var a = Array.from(arguments);
             return a.join("/").replace(/\/+/g, "/");
         },
-        exclude: function () {
+        exclude: function exclude() {
             return "!" + path.include.apply(this, arguments);
         }
     };
@@ -159,11 +160,16 @@ gulp.task("images:copy", function () {
 });
 
 
+gulp.task("git-ignore", function () {
+    return file(".gitignore", "*", {src: true})
+        .pipe(gulp.dest(path.dest));
+});
+
+
 gulp.task("php-html", function () {
     return gulp
         .src([
-            path.include(path.root, "**/**.php"),
-            path.include(path.root, "**/**.html")
+            path.include(path.root, "**/**.{php,html}")
         ])
         .pipe(browserSync.stream());
 });
@@ -197,7 +203,7 @@ gulp.task("watch", function (cb) {
         },
 
         serveStatic: [
-            "./assets"
+            settings.path.dest
         ],
         localOnly: true
     }, cb);
@@ -207,7 +213,7 @@ gulp.task("watch", function (cb) {
     });
 
     gulp.watch([
-        path.include(path.src, "stylus/**/**.styl")
+        path.include(path.src, "stylus/**/**.{styl,css}")
     ], ["stylus"]);
     gulp.watch([
         path.include(path.src, "js/**/**.js")
@@ -216,14 +222,13 @@ gulp.task("watch", function (cb) {
         path.include(path.src, "images/**/**.*")
     ], ["images"]);
     gulp.watch([
-        path.include(path.root, "**/**.php"),
-        path.include(path.root, "**/**.html")
+        path.include(path.root, "**/**.{php,html}")
     ], ["php-html"]);
 
 });
 
 
-gulp.task("build", ["stylus", "js", "images"]);
+gulp.task("build", ["git-ignore", "stylus", "js", "images"]);
 
 
 gulp.task("default", ["build", "watch"]);
