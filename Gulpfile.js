@@ -195,24 +195,26 @@ gulp.task("images", [
 
 
 gulp.task("watch", function (cb) {
-    browserSync.init({
-        notify: true,
-        https: false,
-        open: true,
-        proxy: {
-            target: "http://" + settings.proxy.path + (settings.proxy.port != "80" ? (":" + settings.proxy.port) : ""),
-            ws: true
-        },
+    if (settings.proxy !== false) {
+        browserSync.init({
+            notify: true,
+            https: false,
+            open: true,
+            proxy: {
+                target: "http://" + settings.proxy.path + (settings.proxy.port != "80" ? (":" + settings.proxy.port) : ""),
+                ws: true
+            },
 
-        serveStatic: [
-            settings.path.dest
-        ],
-        localOnly: true
-    }, cb);
+            serveStatic: [
+                settings.path.dest
+            ],
+            localOnly: true
+        }, cb);
 
-    process.on("exit", function () {
-        browserSync.exit();
-    });
+        process.on("exit", function () {
+            browserSync.exit();
+        });
+    }
 
     gulp.watch([
         path.include(path.src, "stylus/**/**.{styl,css}")
