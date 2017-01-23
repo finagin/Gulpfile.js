@@ -2,10 +2,12 @@
     "path": {
         "src": "./src",
         "root": "./",
-        "dest": "./assets"
+        "dest": "./assets/"
     },
     "proxy": {
+        "protocol": "http://",
         "path": "localhost",
-        "port": 80
-    }
+        "port": 8888
+    },
+    "gitignore": true
 }

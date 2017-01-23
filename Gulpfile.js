@@ -39,6 +39,7 @@ var fs = require("fs"),
                 "dest": "./assets/"
             },
             "proxy": {
+                "protocol": "http://",
                 "path": "localhost",
                 "port": 8888
             },
@@ -56,6 +57,20 @@ var fs = require("fs"),
         },
         exclude: function exclude() {
             return "!" + path.include.apply(this, arguments);
+        }
+    },
+    proxy = {
+        "protocol": settings.proxy.protocol,
+        "path": settings.proxy.path,
+        "port": settings.proxy.port,
+        get url() {
+            var url = "";
+
+            url += this.protocol;
+            url += this.path;
+            url += (this.port != "80" ? (":" + this.port) : "");
+
+            return url;
         }
     },
     buildTasks;
@@ -201,7 +216,7 @@ gulp.task("watch", function (cb) {
             https: false,
             open: true,
             proxy: {
-                target: "http://" + settings.proxy.path + (settings.proxy.port != "80" ? (":" + settings.proxy.port) : ""),
+                target: proxy.url,
                 ws: true
             },
 
