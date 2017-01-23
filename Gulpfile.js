@@ -15,7 +15,7 @@ var fs = require("fs"),
     defaults = function defaults(obj, def) {
         function req(obj, def) {
             for (var key in def) {
-                if (obj[key]) {
+                if (obj[key] !== undefined) {
                     if (typeof obj[key] == "object") {
                         req(obj[key], def[key]);
                     }
@@ -39,9 +39,11 @@ var fs = require("fs"),
                 "dest": "./assets/"
             },
             "proxy": {
+                "protocol": "http://",
                 "path": "localhost",
                 "port": 8888
-            }
+            },
+            "gitignore": true
         }
     ),
     path = {
@@ -56,7 +58,22 @@ var fs = require("fs"),
         exclude: function exclude() {
             return "!" + path.include.apply(this, arguments);
         }
-    };
+    },
+    proxy = {
+        "protocol": settings.proxy.protocol,
+        "path": settings.proxy.path,
+        "port": settings.proxy.port,
+        get url() {
+            var url = "";
+
+            url += this.protocol;
+            url += this.path;
+            url += (this.port != "80" ? (":" + this.port) : "");
+
+            return url;
+        }
+    },
+    buildTasks;
 
 
 gulp.task("stylus:clear", function () {
@@ -193,24 +210,26 @@ gulp.task("images", [
 
 
 gulp.task("watch", function (cb) {
-    browserSync.init({
-        notify: true,
-        https: false,
-        open: true,
-        proxy: {
-            target: "http://" + settings.proxy.path + (settings.proxy.port != "80" ? (":" + settings.proxy.port) : ""),
-            ws: true
-        },
+    if (settings.proxy !== false) {
+        browserSync.init({
+            notify: true,
+            https: false,
+            open: true,
+            proxy: {
+                target: proxy.url,
+                ws: true
+            },
 
-        serveStatic: [
-            settings.path.dest
-        ],
-        localOnly: true
-    }, cb);
+            serveStatic: [
+                settings.path.dest
+            ],
+            localOnly: true
+        }, cb);
 
-    process.on("exit", function () {
-        browserSync.exit();
-    });
+        process.on("exit", function () {
+            browserSync.exit();
+        });
+    }
 
     gulp.watch([
         path.include(path.src, "stylus/**/**.{styl,css}")
@@ -227,8 +246,9 @@ gulp.task("watch", function (cb) {
 
 });
 
-
-gulp.task("build", ["git-ignore", "stylus", "js", "images"]);
+buildTasks = ["stylus", "js", "images"];
+buildTasks.unshift.apply(buildTasks, settings.gitignore ? ["git-ignore"] : []);
+gulp.task("build", buildTasks);
 
 
 gulp.task("default", ["build", "watch"]);
