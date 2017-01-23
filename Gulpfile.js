@@ -41,7 +41,8 @@ var fs = require("fs"),
             "proxy": {
                 "path": "localhost",
                 "port": 8888
-            }
+            },
+            "gitignore": true
         }
     ),
     path = {
@@ -56,7 +57,8 @@ var fs = require("fs"),
         exclude: function exclude() {
             return "!" + path.include.apply(this, arguments);
         }
-    };
+    },
+    buildTasks;
 
 
 gulp.task("stylus:clear", function () {
@@ -227,8 +229,9 @@ gulp.task("watch", function (cb) {
 
 });
 
-
-gulp.task("build", ["git-ignore", "stylus", "js", "images"]);
+buildTasks = ["stylus", "js", "images"];
+buildTasks.unshift.apply(buildTasks, settings.gitignore ? ["git-ignore"] : []);
+gulp.task("build", buildTasks);
 
 
 gulp.task("default", ["build", "watch"]);
