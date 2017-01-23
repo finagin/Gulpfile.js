@@ -9,7 +9,7 @@ then
     echo "{}" > ./package.json
 fi
 
-npm install --save gulp gulp-autoprefixer gulp-concat gulp-csso gulp-minifier gulp-minify gulp-rimraf gulp-sourcemaps gulp-stylus gulp-uglify
+npm install --save gulp gulp-autoprefixer gulp-concat gulp-csso gulp-file gulp-minifier gulp-minify gulp-rimraf gulp-sourcemaps gulp-stylus gulp-uglify
 npm install --save-dev browser-sync
 
 yarn
