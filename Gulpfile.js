@@ -15,7 +15,7 @@ var fs = require("fs"),
     defaults = function defaults(obj, def) {
         function req(obj, def) {
             for (var key in def) {
-                if (obj[key]) {
+                if (obj[key] !== undefined) {
                     if (typeof obj[key] == "object") {
                         req(obj[key], def[key]);
                     }
