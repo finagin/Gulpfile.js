@@ -36,7 +36,7 @@ var fs = require("fs"),
             "path": {
                 "src": "./src",
                 "root": "./",
-                "dest": "./assets/"
+                "dist": "./assets/"
             },
             "proxy": {
                 "protocol": "http://",
@@ -49,7 +49,7 @@ var fs = require("fs"),
     path = {
         src: settings.path.src,
         root: settings.path.root,
-        dest: settings.path.dest,
+        dist: settings.path.dist,
 
         include: function include() {
             var a = Array.from(arguments);
@@ -79,7 +79,7 @@ var fs = require("fs"),
 gulp.task("stylus:clear", function () {
     return gulp
         .src([
-            path.include(path.dest, "css")
+            path.include(path.dist, "css")
         ], {read: false})
         .pipe(rimraf({force: true}));
 });
@@ -100,7 +100,7 @@ gulp.task("stylus:main", ["stylus:clear"], function () {
         }))
         .pipe(concat("style.css"))
         .pipe(sourcemaps.write("./"))
-        .pipe(gulp.dest(path.include(path.dest, "css")))
+        .pipe(gulp.dest(path.include(path.dist, "css")))
         .pipe(browserSync.stream());
 });
 gulp.task("stylus:separate", ["stylus:clear"], function () {
@@ -113,7 +113,7 @@ gulp.task("stylus:separate", ["stylus:clear"], function () {
             compress: true
         }))
         .pipe(sourcemaps.write("./"))
-        .pipe(gulp.dest(path.include(path.dest, "css")))
+        .pipe(gulp.dest(path.include(path.dist, "css")))
         .pipe(browserSync.stream());
 });
 
@@ -121,7 +121,7 @@ gulp.task("stylus:separate", ["stylus:clear"], function () {
 gulp.task("js:clear", function () {
     return gulp
         .src([
-            path.include(path.dest, "js")
+            path.include(path.dist, "js")
         ], {read: false})
         .pipe(rimraf({force: true}));
 });
@@ -138,7 +138,7 @@ gulp.task("js:main", ["js:clear"], function () {
         }))
         .pipe(concat("main.js"))
         .pipe(sourcemaps.write("./"))
-        .pipe(gulp.dest(path.include(path.dest, "js")));
+        .pipe(gulp.dest(path.include(path.dist, "js")));
 });
 gulp.task("js:separate", ["js:clear"], function () {
     return gulp
@@ -150,7 +150,7 @@ gulp.task("js:separate", ["js:clear"], function () {
             compress: true
         }))
         .pipe(sourcemaps.write("./"))
-        .pipe(gulp.dest(path.include(path.dest, "js")));
+        .pipe(gulp.dest(path.include(path.dist, "js")));
 });
 gulp.task("js:reload", ["js:main", "js:separate"], function () {
     return gulp
@@ -161,25 +161,32 @@ gulp.task("js:reload", ["js:main", "js:separate"], function () {
 });
 
 
-gulp.task("images:clear", function () {
+gulp.task("other:clear", function () {
     return gulp
         .src([
-            path.include(path.dist, "images")
+            path.include(path.dist, "**/**.*"),
+
+            path.exclude(path.dist, "css/**/**.*"),
+            path.exclude(path.dist, "js/**/**.*")
         ], {read: false})
         .pipe(rimraf({force: true}));
 });
-gulp.task("images:copy", function () {
+gulp.task("other:copy", ["other:clear"], function () {
     return gulp
         .src([
-            path.include(path.src, "images/**/**.*")
+            path.include(path.src, "**/**.*"),
+
+            path.exclude(path.src, "stylus/**/**.*"),
+            path.exclude(path.src, "js/**/**.*")
         ])
-        .pipe(gulp.dest(path.include(path.dest, "images")));
+        .pipe(gulp.dest(path.include(path.dist)))
+        .pipe(browserSync.stream());
 });
 
 
 gulp.task("git-ignore", function () {
     return file(".gitignore", "*", {src: true})
-        .pipe(gulp.dest(path.dest));
+        .pipe(gulp.dest(path.dist));
 });
 
 
@@ -203,9 +210,9 @@ gulp.task("js", [
     "js:separate",
     "js:reload"
 ]);
-gulp.task("images", [
-    "images:clear",
-    "images:copy"
+gulp.task("other", [
+    "other:clear",
+    "other:copy"
 ]);
 
 
@@ -221,7 +228,7 @@ gulp.task("watch", function (cb) {
             },
 
             serveStatic: [
-                settings.path.dest
+                settings.path.dist
             ],
             localOnly: true
         }, cb);
@@ -238,15 +245,18 @@ gulp.task("watch", function (cb) {
         path.include(path.src, "js/**/**.js")
     ], ["js"]);
     gulp.watch([
-        path.include(path.src, "images/**/**.*")
-    ], ["images"]);
+        path.include(path.src, "**/**.*"),
+
+        path.exclude(path.src, "stylus/**/**.*"),
+        path.exclude(path.src, "js/**/**.*")
+    ], ["other"]);
     gulp.watch([
         path.include(path.root, "**/**.{php,html}")
     ], ["php-html"]);
 
 });
 
-buildTasks = ["stylus", "js", "images"];
+buildTasks = ["stylus", "js", "other"];
 buildTasks.unshift.apply(buildTasks, settings.gitignore ? ["git-ignore"] : []);
 gulp.task("build", buildTasks);
 

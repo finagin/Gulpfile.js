@@ -2,7 +2,7 @@
     "path": {
         "src": "./src",
         "root": "./",
-        "dest": "./assets/"
+        "dist": "./assets/"
     },
     "proxy": {
         "protocol": "http://",
