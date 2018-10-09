@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-VERSION='master'
-URL='https://rawgit.com/finagin/Gulpfile.js/'
+VERSION=''
+URL='https://cdn.jsdelivr.net/gh/finagin/Gulpfile.js'
 
 while test $# -gt 0; do
     case "$1" in
@@ -19,7 +19,7 @@ while test $# -gt 0; do
         -v)
             shift
             if test $# -gt 0; then
-                VERSION='v'$1
+                VERSION='@v'$1
             else
                 echo "no version specified"
                 exit 1
@@ -32,7 +32,7 @@ while test $# -gt 0; do
                 echo "no version specified"
                 exit 1
             else
-                VERSION='v'${VERSION}
+                VERSION='@v'${VERSION}
             fi
             shift
             ;;
@@ -52,8 +52,8 @@ then
     echo "{}" > ./package.json
 fi
 
-npm install --save gulp gulp-autoprefixer gulp-concat gulp-csso gulp-file gulp-rimraf gulp-sourcemaps gulp-stylus gulp-uglify
-npm install --save-dev browser-sync
+yarn add gulp gulp-autoprefixer gulp-concat gulp-csso gulp-file gulp-rimraf gulp-sourcemaps gulp-stylus gulp-uglify
+yarn add --dev browser-sync
 
 
 if [ ! -f "./.gitignore" ]

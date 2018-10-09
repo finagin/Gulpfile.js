@@ -6,10 +6,6 @@ Gulpfile.js template
 ```bash
 curl -sSL finagin.github.io/Gulpfile | sh [-s -- -h]
 ```
-or last version without cache
-```bash
-curl -sSL rawgit.com/finagin/Gulpfile.js/master/init | sh [-s -- -h]
-```
 
 ### Config file:
 ##### Gulpfile.json
