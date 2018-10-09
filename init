@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=''
+VERSION='@v2.0.0'
 URL='https://cdn.jsdelivr.net/gh/finagin/Gulpfile.js'
 
 while test $# -gt 0; do
